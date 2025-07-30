@@ -4,6 +4,7 @@ using Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250730194648_PromoCodeImplemented")]
+    partial class PromoCodeImplemented
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -358,10 +361,6 @@ namespace Backend.Migrations
                     b.Property<string>("PromoCodeUsed")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ReservationToken")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -699,26 +698,7 @@ namespace Backend.Migrations
                                 .HasForeignKey("ManifestationRegistrationId");
                         });
 
-                    b.OwnsOne("Backend.Enums.LifeCycleEnum", "LifecycleStatus", b1 =>
-                        {
-                            b1.Property<long>("ManifestationRegistrationId")
-                                .HasColumnType("bigint");
-
-                            b1.Property<int>("Value")
-                                .HasColumnType("int");
-
-                            b1.HasKey("ManifestationRegistrationId");
-
-                            b1.ToTable("ManifestationRegistrations");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ManifestationRegistrationId");
-                        });
-
                     b.Navigation("Address");
-
-                    b.Navigation("LifecycleStatus")
-                        .IsRequired();
 
                     b.Navigation("Manifestation");
                 });

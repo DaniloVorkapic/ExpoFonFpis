@@ -2,11 +2,15 @@
 using Backend.Commands;
 using Backend.DTOs;
 using Backend.Entities;
+using Backend.Enums;
 using Backend.Http;
 using Backend.Repositories;
 using FluentValidation;
+using JordiAragon.SharedKernel.Contracts.Repositories;
 using MediatR;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace Backend.Handlers
 {
@@ -52,14 +56,14 @@ namespace Backend.Handlers
 
            // var rSave = SaveRegistrationAsync(rRegistrationToSave.Value);
 
-            var rSave = await SaveRegistrationAsync(rRegistrationToSave.Value);
+            var rSave = await SaveRegistrationAsync(rRegistrationToSave.Value, request.registrationDto.HasPromoCode);
 
             if (!rSave.IsSuccess)
             {
                 return Result<RegistrationResponse>.Failure(rSave.Error);
             }
 
-            return Result<RegistrationResponse>.Success(new RegistrationResponse {});
+            return Result<RegistrationResponse>.Success(new RegistrationResponse(rRegistrationToSave.Value.PromoCodeGenerated.Code));
         }
 
         private Result<bool> ValidateCapacity(int numberOfPeople, bool isPhotoReserved, bool isArtReserved, long? registrationId)
@@ -69,7 +73,7 @@ namespace Backend.Handlers
             var data = Repository.GetQueryable()
                 .AsNoTracking()
                 .Where(x => x.ManifestationId == 1)
-                 .Where(x => !registrationId.HasValue || x.Id != registrationId.Value)
+                .Where(x => !registrationId.HasValue || x.Id != registrationId.Value)
                 .GroupBy(x => x.Manifestation)
                 .Select(g => new
                 {
@@ -97,13 +101,29 @@ namespace Backend.Handlers
             return Result<bool>.Success(true);
         }
 
-        private async Task<Result<bool>> SaveRegistrationAsync(ManifestationRegistration registration)
+        private async Task<Result<bool>> SaveRegistrationAsync(ManifestationRegistration registration, bool hasPromoCode)
         {
             var rSave = registration.Id == 0 ? await Repository.CreateAsync(registration) : await Repository.UpdateAsync(registration);
           
+
             if (!rSave)
             {
                 return  Result<bool>.Failure("Cannot save registration.");
+            }
+            if (hasPromoCode)
+            {
+
+
+                using (var connection = new SqlConnection("data source=DANILOSSOE;Initial Catalog=FonExpo;Integrated Security=True;TrustServerCertificate=True;"))
+                using (var command = new SqlCommand("UpdatePromoCodeStatus", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@PromoCode", registration.PromoCodeUsed);
+                    command.Parameters.AddWithValue("@LifecycleStatus", (int)LifeCycleStatusEnum.Used);
+
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                }
             }
 
             await UnitOfWork.CommitAsync();
@@ -122,8 +142,12 @@ namespace Backend.Handlers
                 //  .SingleOrDefault();
 
 
+                var code = Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper();
+                var promoCode = PromoCode.Create(code, 1);
+
+
                 var newRegistration = ManifestationRegistration.Create(1, registrationDto.FirstName, registrationDto.LastName, registrationDto.Profession, registrationDto.Address, registrationDto.Email,
-                    registrationDto.IsPhotoReserved, registrationDto.IsArtReserved, registrationDto.IsGroupRegistration, registrationDto.Price, registrationDto.NumberOfPeople);
+                    registrationDto.IsPhotoReserved, registrationDto.IsArtReserved, registrationDto.IsGroupRegistration, registrationDto.Price, registrationDto.NumberOfPeople, registrationDto.PromoCode, registrationDto.HasPromoCode, promoCode);
 
                 return Result<ManifestationRegistration>.Success(newRegistration);
             }

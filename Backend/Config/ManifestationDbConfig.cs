@@ -20,6 +20,12 @@ namespace Backend.Config
                 .HasForeignKey(x => x.ManifestationId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+
+            builder
+                .HasMany(m => m.PromoCodes)
+                .WithOne(x => x.Manifestation)
+                .HasForeignKey(x => x.ManifestationId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

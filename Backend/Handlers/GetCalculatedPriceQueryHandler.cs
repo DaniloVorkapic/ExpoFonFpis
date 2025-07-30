@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Backend.DTOs;
 using Backend.Entities;
+using Backend.Enums;
 using Backend.Http;
 using Backend.Queries;
 using Backend.Repositories;
@@ -16,6 +17,7 @@ namespace Backend.Handlers
 
         public override async Task<Result<CalculatedDto>> Handle(GetCalculatedPriceQuery request, CancellationToken cancellationToken)
         {
+            var hasPromoCode = false;
 
             var manifestation = Repository.GetQueryable()
                 .AsNoTracking()
@@ -57,7 +59,31 @@ namespace Backend.Handlers
                 totalPrice = totalPrice * groupDiscountFactor;
             }
 
-            return Result<CalculatedDto>.Success(Mapper.Map<CalculatedDto>(totalPrice));
+            if (dto.HasPromoCode)
+            {
+                totalPrice *= 0.95m;
+                hasPromoCode = true;
+            }
+            else if (!string.IsNullOrWhiteSpace(dto.PromoCode))
+            {
+                var validPromoCodes = Repository.GetQueryable()
+                    .AsNoTracking()
+                    .Include(x => x.PromoCodes)
+                    .SelectMany(x => x.PromoCodes)
+                    .Where(x => x.LifecycleStatus.Value == (int)LifeCycleStatusEnum.Active)
+                    .Select(x => x.Code)
+                    .ToList();
+
+                if (validPromoCodes.Contains(dto.PromoCode))
+                {
+                    totalPrice *= 0.95m;
+                    hasPromoCode = true;
+                }
+            }
+
+            var calculatedDto = new CalculatedDto(totalPrice, hasPromoCode);
+
+            return Result<CalculatedDto>.Success(Mapper.Map<CalculatedDto>(calculatedDto));
         }
     }
 }

@@ -14,6 +14,8 @@ namespace Backend.DTOs
         int NumberOfPeople,
         bool IsArtReserved,
         bool IsPhotoReserved,
-        decimal Price
+        decimal Price,
+        string? PromoCode,
+        bool HasPromoCode
      );
 }

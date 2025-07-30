@@ -1,6 +1,4 @@
 ﻿namespace Backend.DTOs
 {
-    public sealed record RegistrationResponse()
-    {
-    }
+    public sealed record RegistrationResponse(string PromoCode);
 }

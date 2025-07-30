@@ -6,6 +6,7 @@
         {
             Exibitions = new List<Exibition>();
             ManifestationRegistrations = new List<ManifestationRegistration>();
+            PromoCodes = new List<PromoCode>();
         }
 
         public string? Name { get; set; }               
@@ -19,5 +20,6 @@
         public int? Capacity { get; set; }
         public List<Exibition> Exibitions { get; set; }
         public List<ManifestationRegistration> ManifestationRegistrations { get; set; }
+        public List<PromoCode> PromoCodes { get; set; }
     }
 }

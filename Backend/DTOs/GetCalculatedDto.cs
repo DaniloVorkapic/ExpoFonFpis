@@ -4,6 +4,8 @@
         bool IsGroupRegistration,
         int? NumberOfPeople,
         bool ReserveArt,
-        bool ReservePhoto
+        bool ReservePhoto,
+        string? PromoCode,
+        bool HasPromoCode
         );
 }

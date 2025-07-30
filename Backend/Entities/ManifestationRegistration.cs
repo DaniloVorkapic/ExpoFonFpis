@@ -1,4 +1,5 @@
 ﻿using Backend.DTOs;
+using Backend.Enums;
 using System.Diagnostics.Contracts;
 using System.Text.Json.Serialization;
 using System.Xml.Serialization;
@@ -25,9 +26,15 @@ namespace Backend.Entities
         public bool IsGroupRegistration { get; set; }
         public decimal? Price { get; set; }
         public int? NumberOfPeople { get; set; }
+        public string? PromoCodeUsed { get; set; }
+        public bool HasPromoCode { get; set; }
+        public PromoCode PromoCodeGenerated { get; set; }
+        public LifeCycleEnum LifecycleStatus { get; set; } = LifeCycleStatusEnum.Active;
+        public string ReservationToken { get; set; }
+
 
         private ManifestationRegistration(long manifestationId, string firstName, string lastName, string occupation, AddressDto address, string emailAddress, bool isPhotoReserved,
-            bool isArtReserved, bool isGroupRegistration, decimal price, int numberOfPeople)
+            bool isArtReserved, bool isGroupRegistration, decimal price, int numberOfPeople, string? promoCode, bool hasPromoCode, PromoCode promoCodeGenerated)
         {
             ManifestationId = manifestationId;
             FirstName = firstName;
@@ -39,6 +46,9 @@ namespace Backend.Entities
             IsGroupRegistration = isGroupRegistration;
             Price = price;
             NumberOfPeople = isGroupRegistration ? numberOfPeople : 1;
+            PromoCodeUsed = promoCode;
+            HasPromoCode = hasPromoCode;
+            PromoCodeGenerated = promoCodeGenerated;
 
             Address = address is not null
                     ? new Address
@@ -53,9 +63,9 @@ namespace Backend.Entities
         }
 
         public static ManifestationRegistration Create(long manifestatinId, string firstName, string lastName, string occupation, AddressDto address, string emailAddress, bool isPhotoReserved,
-            bool isArtReserved, bool isGroupRegistration, decimal price, int numberOfPeople)
+            bool isArtReserved, bool isGroupRegistration, decimal price, int numberOfPeople, string? promoCode, bool hasPromoCode, PromoCode promoCodeToGenerate)
         {
-            return new ManifestationRegistration(manifestatinId, firstName, lastName, occupation, address, emailAddress, isPhotoReserved, isArtReserved, isGroupRegistration, price, numberOfPeople);
+            return new ManifestationRegistration(manifestatinId, firstName, lastName, occupation, address, emailAddress, isPhotoReserved, isArtReserved, isGroupRegistration, price, numberOfPeople, promoCode, hasPromoCode, promoCodeToGenerate);
         }
 
         public ManifestationRegistration Update(string firstName, string lastName, string occupation, AddressDto address, string emailAddress, bool isPhotoReserved,

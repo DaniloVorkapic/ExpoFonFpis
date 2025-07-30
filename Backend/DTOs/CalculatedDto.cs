@@ -1,4 +1,4 @@
 ﻿namespace Backend.DTOs
 {
-    public record CalculatedDto(decimal? CalculatedPrice);
+    public record CalculatedDto(decimal? CalculatedPrice, bool HasPromoCode);
 }

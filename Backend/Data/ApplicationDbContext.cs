@@ -40,5 +40,6 @@ namespace Backend.Data
         public DbSet<Manifestation> Manifestations { get; set; }
         public DbSet<Exibition> Exibitions { get; set; }
         public DbSet<ManifestationRegistration> ManifestationRegistrations { get; set; }
+        public DbSet<PromoCode> PromoCodes { get; set; }
     }
 }

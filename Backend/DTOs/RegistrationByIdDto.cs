@@ -14,6 +14,8 @@
         int NumberOfPeople,
         bool ReserveArt,
         bool ReservePhoto,
-        decimal TotalPrice
+        decimal TotalPrice,
+        string? PromoCode,
+        bool HsPromoCodeS
         );
 }

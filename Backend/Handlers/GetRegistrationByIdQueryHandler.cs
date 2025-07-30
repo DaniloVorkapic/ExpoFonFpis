@@ -33,7 +33,9 @@ namespace Backend.Handlers
                     (int)x.NumberOfPeople,
                     x.IsArtReserved,
                     x.IsPhotoReserved,
-                    (decimal)x.Price
+                    (decimal)x.Price,
+                    x.PromoCodeUsed,
+                    x.HasPromoCode
                 ))
                 .SingleOrDefault();
 
