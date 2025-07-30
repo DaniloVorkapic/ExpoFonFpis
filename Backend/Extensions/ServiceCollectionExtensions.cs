@@ -61,6 +61,8 @@ namespace Backend.Extensions
             services.AddTransient<IRequestHandler<GetAllChildrenQuery, Result<List<ChildDto>>>, GetAllChildrenQueryHandler>();
             services.AddTransient<IRequestHandler<DeleteChildCommand, Result<Unit>>, DeleteChildCommandHandler>();
 
+            services.AddTransient<IRequestHandler<CreateRegistrationCommand, Result<RegistrationResponse>>, CreateRegistrationCommandHandler>();
+
             services.AddTransient<IRequestHandler<GetAllPregnanciesQuery, Result<List<PregnancyDto>>>, GetAllPregnanciesQueryHandler>();
             services.AddTransient<IRequestHandler<CreatePregnancyCommand, Result<EmployeeDto>>, CreatePregnancyCommandHandler>();
             services.AddTransient<IRequestHandler<GetPregnancyByIdQuery, Result<PregnancyDto>>, GetPregnancyByIdQueryHandler>();
@@ -78,9 +80,17 @@ namespace Backend.Extensions
             services.AddTransient<IRequestHandler<GetAllNotificationRecipientsQuery, Result<List<NotificationRecipientDto>>>, GetAllNotificationRecipientsQueryHandler>();
             services.AddTransient<IRequestHandler<DeleteNotificationRecipientCommand, Result<Unit>>, DeleteNotificationRecipientCommandHandler>();
 
-            services.AddTransient<INotificationHandler<EmployeeUpdatedEvent>, EmployeeUpdatedEventHandler>();
-            services.AddTransient<INotificationHandler<HolidayUpdatedEvent>, HolidayUpdatedEventHandler>();
-            services.AddTransient<INotificationHandler<SendNotificationCommand>, SendNotificationCommandHandler>();
+            services.AddTransient<IRequestHandler<GetAllExibitionsQuery, Result<List<ExibitionDto>>>, GetAllExibitionsQueryHandler>();
+            services.AddTransient<IRequestHandler<GetFonManifestationQuery, Result<ManifestationDto>>, GetManifestationQueryHandler>();
+            services.AddTransient<IRequestHandler<GetAllRegistrationsQuery, Result<List<RegistrationDto>>>, GetAllRegistrationsQueryHandler>();
+            services.AddTransient<IRequestHandler<GetPricesQuery, Result<PricesDto>>, GetPricesQueryHandler>();
+            services.AddTransient<IRequestHandler<GetCalculatedPriceQuery, Result<CalculatedDto>>, GetCalculatedPriceQueryHandler>();
+            services.AddTransient<IRequestHandler<GetRegistrationByIdQuery, Result<RegistrationByIdDto>>, GetRegistrationByIdQueryHandler>();
+
+
+            //services.AddTransient<INotificationHandler<EmployeeUpdatedEvent>, EmployeeUpdatedEventHandler>();
+            //services.AddTransient<INotificationHandler<HolidayUpdatedEvent>, HolidayUpdatedEventHandler>();
+            //services.AddTransient<INotificationHandler<SendNotificationCommand>, SendNotificationCommandHandler>();
 
             return services;
         }
@@ -94,6 +104,7 @@ namespace Backend.Extensions
             services.AddValidatorsFromAssemblyContaining<CreateLeaveCommandValidator>();
             services.AddValidatorsFromAssemblyContaining<CreateHolidayCommandValidator>();
             services.AddValidatorsFromAssemblyContaining<CreateNotificationRecipientCommandValidator>();
+            services.AddValidatorsFromAssemblyContaining<CreateRegistrationValidator>();
             return services;
         }
 
@@ -114,11 +125,11 @@ namespace Backend.Extensions
             return services;
         }
 
-        public static IApplicationBuilder ConfigureNotificationJob(this IApplicationBuilder app)
-        {
-            RecurringJob.AddOrUpdate<INotificationService>("send-daily-notification",x => x.SendEmailToRecipients(), Cron.Daily);
+        //public static IApplicationBuilder ConfigureNotificationJob(this IApplicationBuilder app)
+        //{
+        //    RecurringJob.AddOrUpdate<INotificationService>("send-daily-notification",x => x.SendEmailToRecipients(), Cron.Daily);
 
-            return app;
-        }
+        //    return app;
+        //}
     }
 }

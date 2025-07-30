@@ -28,10 +28,13 @@ namespace Backend.Repositories
             return await _dbContext.Set<T>().FindAsync(id);
         }
 
-        public async Task<bool> CreateAsync(T entity)
-        {
-            _dbContext.Entry(entity).State = EntityState.Added;
-            return await Task.FromResult(true);
+            public async Task<bool> CreateAsync(T entity)
+            {
+                await _dbContext.Set<T>().AddAsync(entity); // <-- proper way
+                return true;
+
+            //_dbContext.Entry(entity).State = EntityState.Added;
+            //return await Task.FromResult(true);
         }
 
         public async Task<bool> UpdateAsync(T entity)

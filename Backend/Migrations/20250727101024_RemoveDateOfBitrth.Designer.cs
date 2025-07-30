@@ -4,6 +4,7 @@ using Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250727101024_RemoveDateOfBitrth")]
+    partial class RemoveDateOfBitrth
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -279,9 +282,6 @@ namespace Backend.Migrations
                     b.Property<decimal?>("BasePricePhoto")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("Capacity")
-                        .HasColumnType("int");
-
                     b.Property<string>("City")
                         .HasColumnType("nvarchar(max)");
 
@@ -342,9 +342,6 @@ namespace Backend.Migrations
 
                     b.Property<long?>("ManifestationId")
                         .HasColumnType("bigint");
-
-                    b.Property<int?>("NumberOfPeople")
-                        .HasColumnType("int");
 
                     b.Property<string>("Occupation")
                         .HasColumnType("nvarchar(max)");
@@ -609,12 +606,33 @@ namespace Backend.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("Backend.Entities.Manifestation", b =>
+                {
+                    b.OwnsOne("System.Collections.Generic.List<Backend.Entities.ManifestationRegistration>", "ManifestationRegistrations", b1 =>
+                        {
+                            b1.Property<long>("ManifestationId")
+                                .HasColumnType("bigint");
+
+                            b1.Property<int>("Capacity")
+                                .HasColumnType("int");
+
+                            b1.HasKey("ManifestationId");
+
+                            b1.ToTable("Manifestations");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ManifestationId");
+                        });
+
+                    b.Navigation("ManifestationRegistrations")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Backend.Entities.ManifestationRegistration", b =>
                 {
                     b.HasOne("Backend.Entities.Manifestation", "Manifestation")
-                        .WithMany("ManifestationRegistrations")
-                        .HasForeignKey("ManifestationId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .WithMany()
+                        .HasForeignKey("ManifestationId");
 
                     b.OwnsOne("Backend.Entities.Address", "Address", b1 =>
                         {
@@ -623,28 +641,23 @@ namespace Backend.Migrations
 
                             b1.Property<string>("CityName")
                                 .HasMaxLength(255)
-                                .HasColumnType("nvarchar(255)")
-                                .HasColumnName("CityName");
+                                .HasColumnType("nvarchar(255)");
 
                             b1.Property<string>("Country")
                                 .HasMaxLength(255)
-                                .HasColumnType("nvarchar(255)")
-                                .HasColumnName("Country");
+                                .HasColumnType("nvarchar(255)");
 
                             b1.Property<string>("PostCode")
                                 .HasMaxLength(32)
-                                .HasColumnType("nvarchar(32)")
-                                .HasColumnName("PostCode");
+                                .HasColumnType("nvarchar(32)");
 
                             b1.Property<string>("StreetOne")
                                 .HasMaxLength(255)
-                                .HasColumnType("nvarchar(255)")
-                                .HasColumnName("StreetOne");
+                                .HasColumnType("nvarchar(255)");
 
                             b1.Property<string>("StreetTwo")
                                 .HasMaxLength(255)
-                                .HasColumnType("nvarchar(255)")
-                                .HasColumnName("StreetTwo");
+                                .HasColumnType("nvarchar(255)");
 
                             b1.HasKey("ManifestationRegistrationId");
 
@@ -748,8 +761,6 @@ namespace Backend.Migrations
             modelBuilder.Entity("Backend.Entities.Manifestation", b =>
                 {
                     b.Navigation("Exibitions");
-
-                    b.Navigation("ManifestationRegistrations");
                 });
 
             modelBuilder.Entity("Backend.Entities.Pregnancy", b =>

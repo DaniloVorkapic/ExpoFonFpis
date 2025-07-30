@@ -1,7 +1,6 @@
 ﻿using Backend.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace Backend.Data
 {
@@ -38,5 +37,8 @@ namespace Backend.Data
         public DbSet<Leave> Leaves { get; set; }
         public DbSet<Holiday> Holidays { get; set; }
         public DbSet<NotificationRecipient> NotificationRecipients { get; set; }
+        public DbSet<Manifestation> Manifestations { get; set; }
+        public DbSet<Exibition> Exibitions { get; set; }
+        public DbSet<ManifestationRegistration> ManifestationRegistrations { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250727162504_addNumberOfPeople")]
+    partial class addNumberOfPeople
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -278,9 +281,6 @@ namespace Backend.Migrations
 
                     b.Property<decimal?>("BasePricePhoto")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<int?>("Capacity")
-                        .HasColumnType("int");
 
                     b.Property<string>("City")
                         .HasColumnType("nvarchar(max)");
@@ -609,12 +609,33 @@ namespace Backend.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("Backend.Entities.Manifestation", b =>
+                {
+                    b.OwnsOne("System.Collections.Generic.List<Backend.Entities.ManifestationRegistration>", "ManifestationRegistrations", b1 =>
+                        {
+                            b1.Property<long>("ManifestationId")
+                                .HasColumnType("bigint");
+
+                            b1.Property<int>("Capacity")
+                                .HasColumnType("int");
+
+                            b1.HasKey("ManifestationId");
+
+                            b1.ToTable("Manifestations");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ManifestationId");
+                        });
+
+                    b.Navigation("ManifestationRegistrations")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Backend.Entities.ManifestationRegistration", b =>
                 {
                     b.HasOne("Backend.Entities.Manifestation", "Manifestation")
-                        .WithMany("ManifestationRegistrations")
-                        .HasForeignKey("ManifestationId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .WithMany()
+                        .HasForeignKey("ManifestationId");
 
                     b.OwnsOne("Backend.Entities.Address", "Address", b1 =>
                         {
@@ -748,8 +769,6 @@ namespace Backend.Migrations
             modelBuilder.Entity("Backend.Entities.Manifestation", b =>
                 {
                     b.Navigation("Exibitions");
-
-                    b.Navigation("ManifestationRegistrations");
                 });
 
             modelBuilder.Entity("Backend.Entities.Pregnancy", b =>

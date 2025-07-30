@@ -26,7 +26,7 @@ if (app.Environment.IsDevelopment())
 }
 app.UseHangfireDashboard();
 
-app.ConfigureNotificationJob();
+//app.ConfigureNotificationJob();
 
 app.UseHttpsRedirection();
 
