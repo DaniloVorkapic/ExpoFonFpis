@@ -1,10 +1,6 @@
-﻿using FluentValidation.AspNetCore;
-using System.Net.NetworkInformation;
-using System.Reflection;
-using Backend.Commands;
+﻿using Backend.Commands;
 using Backend.Data;
 using Backend.DTOs;
-using Backend.Events;
 using Backend.Handlers;
 using Backend.Http;
 using Backend.Middleware;
@@ -13,9 +9,12 @@ using Backend.Queries;
 using Backend.Repositories;
 using Backend.Services;
 using Backend.Validators;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Hangfire;
 using MediatR;
-using FluentValidation;
+using System.Net.NetworkInformation;
+using System.Reflection;
 
 namespace Backend.Extensions
 {
@@ -62,6 +61,7 @@ namespace Backend.Extensions
             services.AddTransient<IRequestHandler<DeleteChildCommand, Result<Unit>>, DeleteChildCommandHandler>();
 
             services.AddTransient<IRequestHandler<CreateRegistrationCommand, Result<RegistrationResponse>>, CreateRegistrationCommandHandler>();
+            services.AddTransient<IRequestHandler<DeactivateRegistrationCommand, Result<DeactivateRegistrationResponse>>, DeactivateRegistrationCommandHandler>();
 
             services.AddTransient<IRequestHandler<GetAllPregnanciesQuery, Result<List<PregnancyDto>>>, GetAllPregnanciesQueryHandler>();
             services.AddTransient<IRequestHandler<CreatePregnancyCommand, Result<EmployeeDto>>, CreatePregnancyCommandHandler>();
@@ -86,6 +86,7 @@ namespace Backend.Extensions
             services.AddTransient<IRequestHandler<GetPricesQuery, Result<PricesDto>>, GetPricesQueryHandler>();
             services.AddTransient<IRequestHandler<GetCalculatedPriceQuery, Result<CalculatedDto>>, GetCalculatedPriceQueryHandler>();
             services.AddTransient<IRequestHandler<GetRegistrationByIdQuery, Result<RegistrationByIdDto>>, GetRegistrationByIdQueryHandler>();
+            services.AddTransient<IRequestHandler<GetConfimrationQuery, Result<ConfirmationResponse>>, GetConfirmationQueryHandler>();
 
 
             //services.AddTransient<INotificationHandler<EmployeeUpdatedEvent>, EmployeeUpdatedEventHandler>();

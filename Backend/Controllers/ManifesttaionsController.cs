@@ -45,7 +45,6 @@ namespace Backend.Controllers
             return ResultHandler.HandleResult(await Mediator.Send(new GetCalculatedPriceQuery(calculatedDto)));
         }
 
-
         [HttpPost("registrations")]
         public async Task<IActionResult> AddOrUpdateRegistration([FromBody] CreateRegistrationDto registrationDto)
         {
@@ -57,5 +56,18 @@ namespace Backend.Controllers
         {
             return ResultHandler.HandleResult(await Mediator.Send(new GetRegistrationByIdQuery(id)));
         }
+
+        [HttpPost("deactivateRegistration")]
+        public async Task<IActionResult> DeactivateRegistration([FromBody] DeactivateRegistrationDto registrationDto)
+        {
+            return ResultHandler.HandleResult(await Mediator.Send(new DeactivateRegistrationCommand(registrationDto)));
+        }
+
+        [HttpGet("confirmation")]
+        public async Task<IActionResult> GetConfirmation([FromQuery] GetConfirmationDto confirmationDto)
+        {
+            return ResultHandler.HandleResult(await Mediator.Send(new GetConfimrationQuery(confirmationDto)));
+        }
+
     }
 }

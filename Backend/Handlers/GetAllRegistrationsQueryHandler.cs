@@ -5,6 +5,7 @@ using Backend.Http;
 using Backend.Queries;
 using Backend.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 
 namespace Backend.Handlers
 {
@@ -17,14 +18,19 @@ namespace Backend.Handlers
         public override async Task<Result<List<RegistrationDto>>> Handle(GetAllRegistrationsQuery request, CancellationToken cancellationToken)
         {
            var registrations = await Repository.GetQueryable()
+                .AsNoTracking()
                 .Include(x => x.Manifestation)
+                .Include(x => x.LifecycleStatus)
                 .Where(x => x.Manifestation.Name == "FonExpo")
+                .OrderBy(x => x.LifecycleStatus.Value)
                 .Select(x => new RegistrationDto(
                     x.Id,
                     x.FirstName,
                     x.LastName,
                     x.EmailAddres,
-                    x.Price
+                    x.Price,
+                    x.LifecycleStatus.Value,
+                    x.LifecycleStatus.EnumValue.ToString()
                     ))
                 .ToListAsync(cancellationToken);
 

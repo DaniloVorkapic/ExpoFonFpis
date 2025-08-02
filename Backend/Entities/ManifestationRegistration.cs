@@ -1,6 +1,5 @@
 ﻿using Backend.DTOs;
 using Backend.Enums;
-using System.Diagnostics.Contracts;
 using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 
@@ -32,9 +31,8 @@ namespace Backend.Entities
         public LifeCycleEnum LifecycleStatus { get; set; } = LifeCycleStatusEnum.Active;
         public string ReservationToken { get; set; }
 
-
         private ManifestationRegistration(long manifestationId, string firstName, string lastName, string occupation, AddressDto address, string emailAddress, bool isPhotoReserved,
-            bool isArtReserved, bool isGroupRegistration, decimal price, int numberOfPeople, string? promoCode, bool hasPromoCode, PromoCode promoCodeGenerated)
+            bool isArtReserved, bool isGroupRegistration, decimal price, int numberOfPeople, string? promoCode, bool hasPromoCode, PromoCode promoCodeGenerated, string registrationToken)
         {
             ManifestationId = manifestationId;
             FirstName = firstName;
@@ -49,6 +47,7 @@ namespace Backend.Entities
             PromoCodeUsed = promoCode;
             HasPromoCode = hasPromoCode;
             PromoCodeGenerated = promoCodeGenerated;
+            ReservationToken = registrationToken;
 
             Address = address is not null
                     ? new Address
@@ -63,9 +62,9 @@ namespace Backend.Entities
         }
 
         public static ManifestationRegistration Create(long manifestatinId, string firstName, string lastName, string occupation, AddressDto address, string emailAddress, bool isPhotoReserved,
-            bool isArtReserved, bool isGroupRegistration, decimal price, int numberOfPeople, string? promoCode, bool hasPromoCode, PromoCode promoCodeToGenerate)
+            bool isArtReserved, bool isGroupRegistration, decimal price, int numberOfPeople, string? promoCode, bool hasPromoCode, PromoCode promoCodeToGenerate, string registrationToken)
         {
-            return new ManifestationRegistration(manifestatinId, firstName, lastName, occupation, address, emailAddress, isPhotoReserved, isArtReserved, isGroupRegistration, price, numberOfPeople, promoCode, hasPromoCode, promoCodeToGenerate);
+            return new ManifestationRegistration(manifestatinId, firstName, lastName, occupation, address, emailAddress, isPhotoReserved, isArtReserved, isGroupRegistration, price, numberOfPeople, promoCode, hasPromoCode, promoCodeToGenerate, registrationToken);
         }
 
         public ManifestationRegistration Update(string firstName, string lastName, string occupation, AddressDto address, string emailAddress, bool isPhotoReserved,
@@ -85,6 +84,12 @@ namespace Backend.Entities
             IsGroupRegistration = isGroupRegistration;
             Price = price;
             NumberOfPeople = isGroupRegistration ? numberOfPeople : 1;
+            return this;
+        }
+
+        public ManifestationRegistration DeactivateRegistration(int deactivated)
+        {
+            LifecycleStatus.Value = deactivated;
             return this;
         }
     }

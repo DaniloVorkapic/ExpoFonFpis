@@ -7,7 +7,9 @@ namespace Backend.Enums
         [Description("Active")]
         Active = 1,
         [Description("Used")]
-        Used = 2
+        Used = 2,
+        [Description("Deactivated")]
+        Deactivated = 3
     }
 
     public class LifeCycleEnum : EnumWrapper<LifeCycleStatusEnum>

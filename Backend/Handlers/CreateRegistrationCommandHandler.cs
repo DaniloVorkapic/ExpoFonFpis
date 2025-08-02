@@ -47,8 +47,6 @@ namespace Backend.Handlers
 
             var rRegistrationToSave = PrepareRegistration(request.registrationDto);
 
-            
-
             if (!rRegistrationToSave.IsSuccess)
             {
                 return Result<RegistrationResponse>.Failure("aa");
@@ -63,7 +61,7 @@ namespace Backend.Handlers
                 return Result<RegistrationResponse>.Failure(rSave.Error);
             }
 
-            return Result<RegistrationResponse>.Success(new RegistrationResponse(rRegistrationToSave.Value.PromoCodeGenerated.Code));
+            return Result<RegistrationResponse>.Success(new RegistrationResponse(rRegistrationToSave.Value.PromoCodeGenerated?.Code, rRegistrationToSave.Value.ReservationToken));
         }
 
         private Result<bool> ValidateCapacity(int numberOfPeople, bool isPhotoReserved, bool isArtReserved, long? registrationId)
@@ -73,7 +71,7 @@ namespace Backend.Handlers
             var data = Repository.GetQueryable()
                 .AsNoTracking()
                 .Where(x => x.ManifestationId == 1)
-                .Where(x => !registrationId.HasValue || x.Id != registrationId.Value)
+                .Where(x => (!registrationId.HasValue || x.Id != registrationId.Value) && x.LifecycleStatus.Value != (int)LifeCycleStatusEnum.Deactivated)
                 .GroupBy(x => x.Manifestation)
                 .Select(g => new
                 {
@@ -132,22 +130,15 @@ namespace Backend.Handlers
 
         private Result<ManifestationRegistration> PrepareRegistration(CreateRegistrationDto registrationDto)
         {
-
             if (registrationDto.Id == 0)
             {
-                //var manifestationId = Repository.GetQueryable()
-                //  .Include(x => x.Manifestation)
-                //  .Where(x => x.Manifestation.Name == "FonExpo")
-                //  .Select(x => x.Manifestation.Id)
-                //  .SingleOrDefault();
-
-
                 var code = Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper();
                 var promoCode = PromoCode.Create(code, 1);
 
+                var registrationToken = Guid.NewGuid().ToString();
 
                 var newRegistration = ManifestationRegistration.Create(1, registrationDto.FirstName, registrationDto.LastName, registrationDto.Profession, registrationDto.Address, registrationDto.Email,
-                    registrationDto.IsPhotoReserved, registrationDto.IsArtReserved, registrationDto.IsGroupRegistration, registrationDto.Price, registrationDto.NumberOfPeople, registrationDto.PromoCode, registrationDto.HasPromoCode, promoCode);
+                    registrationDto.IsPhotoReserved, registrationDto.IsArtReserved, registrationDto.IsGroupRegistration, registrationDto.Price, registrationDto.NumberOfPeople, registrationDto.PromoCode, registrationDto.HasPromoCode, promoCode, registrationToken);
 
                 return Result<ManifestationRegistration>.Success(newRegistration);
             }

@@ -5,5 +5,7 @@
         string FirstName,
         string LastName,
         string Email,
-        decimal? Price);
+        decimal? Price,
+        int LifecycleValue,
+        string Lifecycle);
 }

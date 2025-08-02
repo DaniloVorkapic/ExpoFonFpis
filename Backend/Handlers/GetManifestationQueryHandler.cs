@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Backend.DTOs;
 using Backend.Entities;
+using Backend.Enums;
 using Backend.Http;
 using Backend.Queries;
 using Backend.Repositories;
@@ -29,9 +30,9 @@ namespace Backend.Handlers
                     (DateTime)x.EndDate!,
                     x.AdditionalInformation,
                     (int)x.Capacity,
-                    (int)(x.Capacity - (x.ManifestationRegistrations.Where(r => r.IsArtReserved == true).Sum(x => x.NumberOfPeople))),
-                    (int)(x.Capacity - (x.ManifestationRegistrations.Where(r => r.IsPhotoReserved == true).Sum(x => x.NumberOfPeople)))
-                ))
+                    (int)(x.Capacity - (x.ManifestationRegistrations.Where(r => r.IsArtReserved == true && r.LifecycleStatus.Value != (int)LifeCycleStatusEnum.Deactivated).Sum(x => x.NumberOfPeople))),
+                    (int)(x.Capacity - (x.ManifestationRegistrations.Where(r => r.IsPhotoReserved == true && r.LifecycleStatus.Value != (int)LifeCycleStatusEnum.Deactivated)).Sum(x => x.NumberOfPeople))
+                    ))
                 .SingleOrDefault();
 
             return Result<ManifestationDto>.Success(Mapper.Map<ManifestationDto>(manifestation));
