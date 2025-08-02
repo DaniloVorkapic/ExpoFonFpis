@@ -9,9 +9,9 @@ namespace Backend.Controllers
 {
     [Route("api/manifestations")]
     [ApiController]
-    public class ManifesttaionsController : BaseController
+    public class ManifestationsController : BaseController
     {
-        public ManifesttaionsController(IMediator mediator) : base(mediator)
+        public ManifestationsController(IMediator mediator) : base(mediator)
         {
         }
 

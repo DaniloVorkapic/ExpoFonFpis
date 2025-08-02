@@ -8,24 +8,6 @@ namespace Backend.Mappers
     {
         public MappingProfile()
         {
-            CreateMap<MaleEmployee, EmployeeDto>();
-            CreateMap<MaleEmployee, MaleEmployeeDto>();
-            CreateMap<FemaleEmployee, EmployeeDto>();
-            CreateMap<FemaleEmployee, FemaleEmployeeDto>();
-
-            CreateMap<Child, ChildDto>();
-            CreateMap<CreateChildDto, Child>();
-
-            CreateMap<Pregnancy, PregnancyDto>();
-            CreateMap<CreatePregnancyDto, Pregnancy>();
-
-            CreateMap<Leave, LeaveDto>();
-            CreateMap<CreateLeaveDto, Leave>();
-
-            CreateMap<Holiday, HolidayDto>();
-            CreateMap<CreateHolidayDto, Holiday>();
-
-            CreateMap<NotificationRecipient, NotificationRecipientDto>();
         }
     }
 }
