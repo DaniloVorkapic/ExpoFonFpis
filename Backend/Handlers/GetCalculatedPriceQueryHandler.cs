@@ -32,18 +32,22 @@ namespace Backend.Handlers
             decimal pricePhoto = (decimal)manifestation.BasePricePhoto;
             var dto = request.calculatedDto;
 
-            decimal totalPrice = 0;
+            decimal finalPrice = 0;
+
+            var totalPrice = (dto.ReserveArt ? priceArt : 0m) + (dto.ReservePhoto ? pricePhoto : 0m);
 
             bool reservedBoth = dto.ReserveArt && dto.ReservePhoto;
             if (reservedBoth)
             {
-                totalPrice = (priceArt + pricePhoto) * 0.9m;
+                finalPrice = (priceArt + pricePhoto) * 0.9m;
             }
             else
             {
-                totalPrice += dto.ReserveArt ? priceArt : 0m;
-                totalPrice += dto.ReservePhoto ? pricePhoto : 0m;
+                finalPrice += dto.ReserveArt ? priceArt : 0m;
+                finalPrice += dto.ReservePhoto ? pricePhoto : 0m;
             }
+
+            var priceAfterDiscountOnDays = finalPrice;
 
             // Apply group discount
             if (dto.IsGroupRegistration)
@@ -55,13 +59,15 @@ namespace Backend.Handlers
                 else if (dto.NumberOfPeople >= 3)
                     groupDiscountFactor = 0.97m;
 
-                totalPrice = (decimal)(totalPrice * dto.NumberOfPeople);
-                totalPrice = totalPrice * groupDiscountFactor;
+                finalPrice = (decimal)(finalPrice * dto.NumberOfPeople);
+                finalPrice = finalPrice * groupDiscountFactor;
             }
+
+            var priceAfterDiscountOnGroup = finalPrice;
 
             if (dto.HasPromoCode)
             {
-                totalPrice *= 0.95m;
+                finalPrice *= 0.95m;
                 hasPromoCode = true;
             }
             else if (!string.IsNullOrWhiteSpace(dto.PromoCode))
@@ -76,12 +82,14 @@ namespace Backend.Handlers
 
                 if (validPromoCodes.Contains(dto.PromoCode))
                 {
-                    totalPrice *= 0.95m;
+                    finalPrice *= 0.95m;
                     hasPromoCode = true;
                 }
             }
 
-            var calculatedDto = new CalculatedDto(totalPrice, hasPromoCode);
+            var priceAfterPromoCodeDiscount = finalPrice;
+
+            var calculatedDto = new CalculatedDto(totalPrice, priceAfterDiscountOnDays, priceAfterDiscountOnGroup, priceAfterPromoCodeDiscount, finalPrice, hasPromoCode);
 
             return Result<CalculatedDto>.Success(Mapper.Map<CalculatedDto>(calculatedDto));
         }
